@@ -56,12 +56,17 @@ def main(args):
                 video_to_images(args.input_path, img_folder=img_dir)
 
         elif args.input_type == "folder":
-            img_dir = osp.join(args.input_path, "imgs")
-            front_view_dir = osp.join(args.input_path, "front_view_%s" % args.backbone)
-            side_view_dir = osp.join(args.input_path, "side_view_%s" % args.backbone)
-            bbox_dir = osp.join(args.input_path, "bbox")
+            # img_dir = osp.join(args.input_path, "imgs")
+            img_dir = args.input_path
+            if args.output_path is None:
+                args.output_path = args.input_path
+            else:
+                os.makedirs(args.output_path, exist_ok=True)
+            front_view_dir = osp.join(args.output_path, "front_view_%s" % args.backbone)
+            side_view_dir = osp.join(args.output_path, "side_view_%s" % args.backbone)
+            bbox_dir = osp.join(args.output_path, "bbox")
             basename = args.input_path.split('/')[-1]
-            result_filepath = osp.join(args.input_path, f"{basename}_cliff_{args.backbone}.npz")
+            result_filepath = osp.join(args.output_path, f"{basename}_cliff_{args.backbone}.npz")
 
         # get all image paths
         img_path_list = glob.glob(osp.join(img_dir, '*.jpg'))
@@ -238,6 +243,7 @@ if __name__ == '__main__':
     parser.add_argument('--input_type', default='image', choices=['image', 'folder', 'video'],
                         help='input type')
     parser.add_argument('--input_path', default='test_samples/nba.jpg', help='path to the input data')
+    parser.add_argument('--output_path', default=None, help='path to the input data')
 
     parser.add_argument('--ckpt',
                         default="data/ckpt/hr48-PA43.0_MJE69.0_MVE81.2_3dpw.pt",
