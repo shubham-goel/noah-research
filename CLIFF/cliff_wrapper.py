@@ -46,13 +46,15 @@ class CLIFFWrapper2023:
         return self
 
     @torch.no_grad()
-    def __call__(self, batch, naive_focal_cliff=False):
+    def __call__(self, batch, naive_focal_cliff=False, input_is_square=True):
         focal_length = 5000.
-        image_size = 224.
+        image_size = 256.
 
         # Forward pass on CLIFF model
         norm_img = batch["img"].float()
-        assert norm_img.shape[1:] == (3, image_size, image_size)
+        if input_is_square:
+            norm_img = norm_img[:,:,:,32:-32]
+        assert norm_img.shape[1:] == (3, image_size, 192)
 
         # What's available in our batch?
         box_center = batch["box_center"].float()
